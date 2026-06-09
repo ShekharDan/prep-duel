@@ -1,6 +1,7 @@
 import { usePrep } from "../context/PrepContext.jsx";
 
 const SHEET_ITEMS = [
+  { tab: "backlog", label: "Backlog", icon: "M5 5h14v2H5V5zm0 5h10v2H5v-2zm0 5h14v2H5v-2z", color: "warn", badge: true },
   { tab: "topics", label: "Path", icon: "M4 6h16v2H4V6zm0 5h10v2H4v-2zm0 5h14v2H4v-2z", color: "cil" },
   { tab: "duel", label: "Duel", icon: "M6 6l4 12 2-6 2 6 4-12H6z", color: "partner" },
   { tab: "quiz", label: "Tests", icon: "M7 4h10v2H7V4zm12 4H5a1 1 0 0 0-1 1v11h16V9a1 1 0 0 0-1-1z", color: "warn" },
@@ -9,7 +10,7 @@ const SHEET_ITEMS = [
 ];
 
 export default function MoreSheet() {
-  const { moreOpen, switchTab, closeMoreSheet } = usePrep();
+  const { moreOpen, switchTab, closeMoreSheet, backlogCount } = usePrep();
 
   return (
     <>
@@ -36,6 +37,9 @@ export default function MoreSheet() {
                 <path d={item.icon} fill="currentColor" />
               </svg>
               <span>{item.label}</span>
+              {item.badge && backlogCount > 0 && (
+                <span className="sheet-badge">{backlogCount}</span>
+              )}
             </button>
           ))}
         </div>

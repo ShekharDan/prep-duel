@@ -28,6 +28,13 @@ export default function SettingsTab({ active }) {
       </div>
 
       <div className="card">
+        <div className="card-title">Schedule</div>
+        <p className="small muted">
+          Prep cycle starts <strong>{state.prepStartDate}</strong> (Day 1 = Tuesday plan)
+        </p>
+      </div>
+
+      <div className="card">
         <div className="card-title">Appearance</div>
         <div className="theme-switch">
           <button

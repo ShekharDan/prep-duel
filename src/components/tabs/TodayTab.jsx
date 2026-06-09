@@ -31,77 +31,94 @@ export default function TodayTab({ active }) {
         </p>
       )}
 
-      <div className="today-progress-chip">
-        <span>{doneCount}/{totalBlocks} blocks</span>
-        <div className="today-progress-mini">
-          <div
-            className="today-progress-mini-fill"
-            style={{ width: `${totalBlocks ? (doneCount / totalBlocks) * 100 : 0}%` }}
-          />
+      {todaySchedule.notStarted ? (
+        <div className="card backlog-empty">
+          <div className="backlog-empty-icon">🌙</div>
+          <p className="card-title" style={{ marginBottom: 6 }}>
+            Kal se shuru
+          </p>
+          <p className="small muted">
+            Aaj explore day tha — evening blocks{" "}
+            <strong>{todaySchedule.startLabel}</strong> se active honge. Week tab pe poora plan dekh sakte ho.
+          </p>
         </div>
-      </div>
-
-      <div id="schedule-list">
-        {todaySchedule.blocks.map((block, i) => (
-          <label
-            key={block.id}
-            className={`schedule-block track-${block.track}${block.done ? " done" : ""}`}
-            style={{ animationDelay: `${i * 0.06}s` }}
-          >
-            <input
-              type="checkbox"
-              data-block={block.id}
-              checked={block.checked}
-              onChange={(e) => handleBlockToggle(block.id, e.target.checked)}
-            />
-            <div className="schedule-block-body">
-              <div className="block-header">
-                <span className="block-time">{block.time}</span>
-                <span className="block-mins">{block.minutes}m</span>
-                <span className={`block-track-pill ${block.track}`}>
-                  {block.track === "corporate" ? "Corp" : block.track === "cil" ? "CIL" : "Both"}
-                </span>
-              </div>
-              <div className="block-title">
-                {block.title}
-                {block.focus}
-              </div>
-              {block.tasks.length > 0 && (
-                <ul className="block-tasks small">
-                  {block.tasks.map((t, j) => (
-                    <li key={j}>{t}</li>
-                  ))}
-                </ul>
-              )}
-              {block.topicNames && (
-                <div className="block-topics small muted">Topics: {block.topicNames}</div>
-              )}
-              <div className="block-desc">+{block.xp} XP</div>
+      ) : (
+        <>
+          <div className="today-progress-chip">
+            <span>
+              {doneCount}/{totalBlocks} blocks
+            </span>
+            <div className="today-progress-mini">
+              <div
+                className="today-progress-mini-fill"
+                style={{ width: `${totalBlocks ? (doneCount / totalBlocks) * 100 : 0}%` }}
+              />
             </div>
-          </label>
-        ))}
-      </div>
+          </div>
 
-      <div className="card energy-card">
-        <label>
-          Energy {ENERGY_EMOJI[todaySchedule.energy] || "🙂"}
-          <input
-            type="range"
-            id="energy"
-            min="1"
-            max="5"
-            value={todaySchedule.energy}
-            onChange={(e) => setEnergyDraft(Number(e.target.value))}
-          />
-        </label>
-        <span id="energy-val" className="energy-face">
-          {ENERGY_EMOJI[todaySchedule.energy]}
-        </span>
-      </div>
+          <div id="schedule-list">
+            {todaySchedule.blocks.map((block, i) => (
+              <label
+                key={block.id}
+                className={`schedule-block track-${block.track}${block.done ? " done" : ""}`}
+                style={{ animationDelay: `${i * 0.06}s` }}
+              >
+                <input
+                  type="checkbox"
+                  data-block={block.id}
+                  checked={block.checked}
+                  onChange={(e) => handleBlockToggle(block.id, e.target.checked)}
+                />
+                <div className="schedule-block-body">
+                  <div className="block-header">
+                    <span className="block-time">{block.time}</span>
+                    <span className="block-mins">{block.minutes}m</span>
+                    <span className={`block-track-pill ${block.track}`}>
+                      {block.track === "corporate" ? "Corp" : block.track === "cil" ? "CIL" : "Both"}
+                    </span>
+                  </div>
+                  <div className="block-title">
+                    {block.title}
+                    {block.focus}
+                  </div>
+                  {block.tasks.length > 0 && (
+                    <ul className="block-tasks small">
+                      {block.tasks.map((t, j) => (
+                        <li key={j}>{t}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {block.topicNames && (
+                    <div className="block-topics small muted">Topics: {block.topicNames}</div>
+                  )}
+                  <div className="block-desc">+{block.xp} XP</div>
+                </div>
+              </label>
+            ))}
+          </div>
 
-      <button id="save-day" type="button" className="btn primary full" onClick={handleSaveDay}>
-        Save day
-      </button>
+          <div className="card energy-card">
+            <label>
+              Energy {ENERGY_EMOJI[todaySchedule.energy] || "🙂"}
+              <input
+                type="range"
+                id="energy"
+                min="1"
+                max="5"
+                value={todaySchedule.energy}
+                onChange={(e) => setEnergyDraft(Number(e.target.value))}
+              />
+            </label>
+            <span id="energy-val" className="energy-face">
+              {ENERGY_EMOJI[todaySchedule.energy]}
+            </span>
+          </div>
+
+          <button id="save-day" type="button" className="btn primary full" onClick={handleSaveDay}>
+            Save day
+          </button>
+        </>
+      )}
     </section>
   );
 }

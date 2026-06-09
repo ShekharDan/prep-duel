@@ -24,7 +24,7 @@ const DOCK_TABS = [
 ];
 
 export default function Dock() {
-  const { activeTab, moreOpen, switchTab, openMoreSheet } = usePrep();
+  const { activeTab, moreOpen, switchTab, openMoreSheet, backlogCount } = usePrep();
 
   return (
     <nav className="dock" id="main-nav">
@@ -52,6 +52,7 @@ export default function Dock() {
           <path d="M5 7h14v2H5V7zm0 5h14v2H5v-2zm0 5h14v2H5v-2z" />
         </svg>
         <span>More</span>
+        {backlogCount > 0 && <span className="dock-badge">{backlogCount}</span>}
       </button>
     </nav>
   );

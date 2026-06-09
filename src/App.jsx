@@ -12,6 +12,7 @@ import TopicsTab from "./components/tabs/TopicsTab.jsx";
 import QuizTab from "./components/tabs/QuizTab.jsx";
 import ResourcesTab from "./components/tabs/ResourcesTab.jsx";
 import DuelTab from "./components/tabs/DuelTab.jsx";
+import BacklogTab from "./components/tabs/BacklogTab.jsx";
 import SettingsTab from "./components/tabs/SettingsTab.jsx";
 import Toast from "./components/Toast.jsx";
 import Confetti from "./components/Confetti.jsx";
@@ -34,6 +35,7 @@ function AppShell() {
           <QuizTab active={activeTab === "quiz"} />
           <ResourcesTab active={activeTab === "resources"} />
           <DuelTab active={activeTab === "duel"} />
+          <BacklogTab active={activeTab === "backlog"} />
           <SettingsTab active={activeTab === "settings"} />
         </main>
         <footer className="footer">PrepDuel</footer>

@@ -43,7 +43,9 @@ import {
   syncTopicsFromDay,
   isTopicScheduledToday,
   getTopicById,
+  isPrepStarted,
 } from "../lib/roadmap.js";
+import { getBacklogItems, getBacklogCount } from "../lib/backlog.js";
 import { requestPermission, startAlarmLoop, nextAlarmTime } from "../lib/notify.js";
 import { applyTimeTheme, applyColorMode, getMotivation, getTimePhase } from "../lib/theme.js";
 import {
@@ -139,13 +141,23 @@ export function PrepProvider({ children }) {
     stateRef.current = state;
   }, [state]);
 
-  const mutateState = useCallback((fn) => {
-    setStateRaw((prev) => {
-      fn(prev);
-      saveState(prev);
-      return { ...prev };
-    });
+  const cloneState = useCallback((prev) => {
+    return {
+      ...prev,
+      focus: prev.focus ? { ...prev.focus } : prev.focus,
+    };
   }, []);
+
+  const mutateState = useCallback(
+    (fn) => {
+      setStateRaw((prev) => {
+        fn(prev);
+        saveState(prev);
+        return cloneState(prev);
+      });
+    },
+    [cloneState]
+  );
 
   const showSetup = !state.sessionJoined;
 
@@ -223,10 +235,10 @@ export function PrepProvider({ children }) {
           clearInterval(focusTickRef.current);
           focusTickRef.current = null;
         }
-        return { ...prev };
+        return cloneState(prev);
       });
     }, 1000);
-  }, []);
+  }, [cloneState]);
 
   const stopFocusLoop = useCallback(() => {
     if (focusTickRef.current) {
@@ -275,21 +287,40 @@ export function PrepProvider({ children }) {
   }, [mutateState, stopFocusLoop]);
 
   const handleBlockToggle = useCallback(
-    (blockId, checked) => {
-      const today = todayKey();
+    (blockId, checked, dateKey = todayKey()) => {
       mutateState((s) => {
-        if (!s.dailyLog[today]) s.dailyLog[today] = {};
-        const was = s.dailyLog[today][blockId];
-        s.dailyLog[today][blockId] = checked;
+        if (!s.dailyLog[dateKey]) s.dailyLog[dateKey] = {};
+        const was = s.dailyLog[dateKey][blockId];
+        s.dailyLog[dateKey][blockId] = checked;
         if (checked && !was) {
           const block = SCHEDULE_BLOCKS.find((x) => x.id === blockId);
           if (block) addXp(s, block.xp, "block");
         }
-        syncTopicsFromDay(s, today);
+        syncTopicsFromDay(s, dateKey, new Date(`${dateKey}T12:00:00`));
         syncRoom(s);
       });
     },
     [mutateState]
+  );
+
+  const handleBacklogComplete = useCallback(
+    (dateKey, blockId) => {
+      handleBlockToggle(blockId, true, dateKey);
+      showToast("Backlog block done — nice catch-up!", "success");
+    },
+    [handleBlockToggle, showToast]
+  );
+
+  const handleBacklogSkip = useCallback(
+    (dateKey, blockId) => {
+      mutateState((s) => {
+        if (!s.backlogSkipped) s.backlogSkipped = {};
+        s.backlogSkipped[`${dateKey}:${blockId}`] = true;
+        syncRoom(s);
+      });
+      showToast("Skipped — won't show in backlog again");
+    },
+    [mutateState, showToast]
   );
 
   const handleSaveDay = useCallback(() => {
@@ -646,7 +677,13 @@ export function PrepProvider({ children }) {
       showStop: active,
       showStart: !(active && f.mode !== "paused"),
     };
-  }, [state.focus]);
+  }, [
+    state.focus?.active,
+    state.focus?.mode,
+    state.focus?.remainingSec,
+    state.focus?.totalSec,
+    state.focus?.label,
+  ]);
 
   const todayDate = useMemo(
     () =>
@@ -662,6 +699,25 @@ export function PrepProvider({ children }) {
   const todaySchedule = useMemo(() => {
     const today = todayKey();
     const log = state.dailyLog[today] || {};
+    const started = isPrepStarted(state);
+
+    if (!started) {
+      const startDate = new Date(`${state.prepStartDate}T12:00:00`);
+      const startLabel = startDate.toLocaleDateString("en-IN", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      });
+      return {
+        prepBanner: `Schedule starts ${startLabel} — aaj explore day tha, kal se Prep Day 1`,
+        blocks: [],
+        energy: log.energy ?? 3,
+        cycleDay: null,
+        notStarted: true,
+        startLabel,
+      };
+    }
+
     const dayName = getEffectiveDay(state);
     const cycleDay = getPrepCycleDayNumber(state);
     const plan = getDayPlan(dayName);
@@ -691,8 +747,11 @@ export function PrepProvider({ children }) {
       };
     });
     const energy = energyDraft ?? log.energy ?? 3;
-    return { prepBanner, blocks, energy, cycleDay };
+    return { prepBanner, blocks, energy, cycleDay, notStarted: false };
   }, [state, energyDraft]);
+
+  const backlogItems = useMemo(() => getBacklogItems(state), [state]);
+  const backlogCount = useMemo(() => getBacklogCount(state), [state]);
 
   const weekPlan = useMemo(() => {
     const todayPlanDay = getEffectiveDay(state);
@@ -939,6 +998,8 @@ export function PrepProvider({ children }) {
     focusDisplay,
     todayDate,
     todaySchedule,
+    backlogItems,
+    backlogCount,
     weekPlan,
     topicItems,
     quizCategories,
@@ -961,6 +1022,8 @@ export function PrepProvider({ children }) {
     handleFocusResume,
     handleFocusStop,
     handleBlockToggle,
+    handleBacklogComplete,
+    handleBacklogSkip,
     setEnergyDraft,
     handleSaveDay,
     mockP1Input: mockP1,

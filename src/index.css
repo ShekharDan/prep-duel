@@ -1969,3 +1969,86 @@ html[data-color="light"] .hero-motivate {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Backlog */
+.backlog-list {
+  display: grid;
+  gap: 12px;
+}
+
+.backlog-item {
+  border-left: 3px solid var(--primary);
+  animation: enter-pop 0.45s ease both;
+}
+
+.backlog-item.track-cil { border-left-color: var(--cil); }
+.backlog-item.track-corporate { border-left-color: var(--corp); }
+.backlog-item.track-both { border-left-color: var(--primary); }
+
+.backlog-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.backlog-date {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.backlog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.backlog-empty {
+  text-align: center;
+  padding: 28px 20px;
+}
+
+.backlog-empty-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+  color: var(--primary);
+}
+
+.dock-btn {
+  position: relative;
+}
+
+.dock-badge,
+.sheet-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--warn);
+  color: #0a0c10;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+}
+
+.sheet-item {
+  position: relative;
+}
+
+.sheet-badge {
+  top: 8px;
+  right: 8px;
+}
+

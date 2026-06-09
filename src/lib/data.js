@@ -1,5 +1,8 @@
 /** PrepDuel content: schedules, topics, quizzes, resources */
 
+/** Official prep cycle start (explore day excluded) */
+export const SCHEDULE_START_DATE = "2026-05-29";
+
 export const SCHEDULE_BLOCKS = [
   { id: "m-p2", time: "6:30–8:00", minutes: 90, session: "morning", title: "CIL Paper II", desc: "DBMS / OS / CN / DSA / SE — see weekly rotation", track: "cil", xp: 15 },
   { id: "m-dsa", time: "8:00–8:45", minutes: 45, session: "morning", title: "DSA (Corporate)", desc: "1 LeetCode — arrays → trees → graphs", track: "corporate", xp: 15 },

@@ -12,7 +12,15 @@ function toDateKey(date = new Date()) {
   return date.toISOString().slice(0, 10);
 }
 
-/** Which plan day to use — cycle starts on prepStartDate (Tuesday session) */
+export function isPrepStarted(state, date = new Date()) {
+  const startKey = state?.prepStartDate;
+  if (!startKey) return false;
+  const start = new Date(`${startKey}T12:00:00`);
+  const cur = new Date(`${toDateKey(date)}T12:00:00`);
+  return cur >= start;
+}
+
+/** Which plan day to use — cycle starts on prepStartDate (Day 1 = Tuesday plan) */
 export function getEffectiveDay(state, date = new Date()) {
   const startKey = state?.prepStartDate;
   if (!startKey) return getDayName(date);
@@ -20,7 +28,16 @@ export function getEffectiveDay(state, date = new Date()) {
   const start = new Date(`${startKey}T12:00:00`);
   const cur = new Date(`${toDateKey(date)}T12:00:00`);
   const diffDays = Math.floor((cur - start) / 86400000);
-  if (diffDays < 0) return PREP_CYCLE_DAYS[0];
+  if (diffDays < 0) return null;
+  return PREP_CYCLE_DAYS[diffDays % PREP_CYCLE_DAYS.length];
+}
+
+export function getEffectiveDayForDate(prepStartDate, dateKey) {
+  if (!prepStartDate || !dateKey) return null;
+  const start = new Date(`${prepStartDate}T12:00:00`);
+  const cur = new Date(`${dateKey}T12:00:00`);
+  const diffDays = Math.floor((cur - start) / 86400000);
+  if (diffDays < 0) return null;
   return PREP_CYCLE_DAYS[diffDays % PREP_CYCLE_DAYS.length];
 }
 
@@ -30,7 +47,15 @@ export function getPrepCycleDayNumber(state, date = new Date()) {
   const start = new Date(`${startKey}T12:00:00`);
   const cur = new Date(`${toDateKey(date)}T12:00:00`);
   const diffDays = Math.floor((cur - start) / 86400000);
-  return diffDays < 0 ? 0 : (diffDays % PREP_CYCLE_DAYS.length) + 1;
+  return diffDays < 0 ? null : (diffDays % PREP_CYCLE_DAYS.length) + 1;
+}
+
+export function getPrepCycleDayNumberForDate(prepStartDate, dateKey) {
+  if (!prepStartDate || !dateKey) return null;
+  const start = new Date(`${prepStartDate}T12:00:00`);
+  const cur = new Date(`${dateKey}T12:00:00`);
+  const diffDays = Math.floor((cur - start) / 86400000);
+  return diffDays < 0 ? null : (diffDays % PREP_CYCLE_DAYS.length) + 1;
 }
 
 export function getDayPlan(dayName) {
@@ -42,7 +67,9 @@ export function getTopicById(id) {
 }
 
 export function getTodayTopicIds(state, date = new Date()) {
+  if (!isPrepStarted(state, date)) return [];
   const dayName = getEffectiveDay(state, date);
+  if (!dayName) return [];
   const plan = getDayPlan(dayName);
   const ids = new Set();
   Object.entries(plan.blocks).forEach(([blockId, b]) => {

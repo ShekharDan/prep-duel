@@ -1,6 +1,7 @@
 import { countRoadmapProgress } from "./roadmap.js";
 import { buildPresence } from "./presence.js";
 import { defaultFocusState } from "./focus.js";
+import { SCHEDULE_START_DATE } from "./data.js";
 
 const KEY_V2 = "prepduel_v2";
 const KEY_V1 = "prepduel_v1";
@@ -31,7 +32,8 @@ function defaultState() {
     weekXp: { [weekId]: { you: 0, partner: 0 } },
     partnerXpLocal: 0,
     lastSyncAt: null,
-    prepStartDate: todayKey(),
+    prepStartDate: SCHEDULE_START_DATE,
+    backlogSkipped: {},
     focus: defaultFocusState(),
     colorMode: "dark",
     sessionJoined: false,
@@ -45,7 +47,10 @@ function mergeSavedState(parsed) {
     ...parsed,
     profile: { ...base.profile, ...(parsed.profile || {}) },
   };
-  if (!merged.prepStartDate) merged.prepStartDate = todayKey();
+  if (!merged.prepStartDate || merged.prepStartDate === "2026-05-28") {
+    merged.prepStartDate = SCHEDULE_START_DATE;
+  }
+  if (!merged.backlogSkipped) merged.backlogSkipped = {};
   if (merged.profile?.name?.trim()) merged.sessionJoined = true;
   return merged;
 }
