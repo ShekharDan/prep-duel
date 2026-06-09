@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#141316" />
+  <meta name="description" content="CIL + Corporate prep tracker with duels, quizzes, and alarms" />
+  <title>PrepDuel — CIL × Corporate</title>
+  <link rel="manifest" href="/prep-duel/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2334d399' width='100' height='100' rx='22'/><text x='50' y='62' font-size='48' text-anchor='middle' fill='%230a0a0a'>⚔</text></svg>" />
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem("prepduel_v2");
+        if (raw) {
+          var s = JSON.parse(raw);
+          if (s.colorMode) {
+            document.documentElement.dataset.color = s.colorMode;
+            document.body.dataset.color = s.colorMode;
+          }
+        }
+      } catch (e) {}
+      var h = new Date().getHours();
+      var p = h >= 5 && h < 11 ? "morning" : h >= 11 && h < 17 ? "afternoon" : h >= 17 && h < 21 ? "evening" : "night";
+      document.documentElement.dataset.phase = p;
+      document.body.dataset.phase = p;
+    })();
+  </script>
+  <script type="module" crossorigin src="/prep-duel/assets/index-CDqQ4gUh.js"></script>
+  <link rel="stylesheet" crossorigin href="/prep-duel/assets/index-BkcuXWgI.css">
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

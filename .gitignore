@@ -1,0 +1,6 @@
+node_modules/
+dist/
+
+# Keep real Firebase keys local — repo ships firebase-config.example.js only
+js/firebase-config.js
+src/lib/firebase-config.js
