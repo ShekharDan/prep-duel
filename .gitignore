@@ -1,0 +1,2 @@
+# Keep real Firebase keys local — repo ships firebase-config.example.js only
+js/firebase-config.js
