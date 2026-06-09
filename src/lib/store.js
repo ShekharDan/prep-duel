@@ -34,21 +34,32 @@ function defaultState() {
     prepStartDate: todayKey(),
     focus: defaultFocusState(),
     colorMode: "dark",
+    sessionJoined: false,
   };
+}
+
+function mergeSavedState(parsed) {
+  const base = defaultState();
+  const merged = {
+    ...base,
+    ...parsed,
+    profile: { ...base.profile, ...(parsed.profile || {}) },
+  };
+  if (!merged.prepStartDate) merged.prepStartDate = todayKey();
+  if (merged.profile?.name?.trim()) merged.sessionJoined = true;
+  return merged;
 }
 
 export function loadState() {
   try {
     const rawV2 = localStorage.getItem(KEY_V2);
     if (rawV2) {
-      const merged = { ...defaultState(), ...JSON.parse(rawV2) };
-      if (!merged.prepStartDate) merged.prepStartDate = todayKey();
-      return merged;
+      return mergeSavedState(JSON.parse(rawV2));
     }
 
     const rawV1 = localStorage.getItem(KEY_V1);
     if (rawV1) {
-      const migrated = { ...defaultState(), ...JSON.parse(rawV1), userId: newUserId() };
+      const migrated = mergeSavedState({ ...JSON.parse(rawV1), userId: newUserId() });
       saveState(migrated);
       return migrated;
     }
@@ -56,6 +67,21 @@ export function loadState() {
   } catch {
     return defaultState();
   }
+}
+
+export function logoutSession(state) {
+  if (roomUnsubscribe) {
+    roomUnsubscribe();
+    roomUnsubscribe = null;
+  }
+  const next = {
+    ...state,
+    profile: { name: "", partner: "" },
+    roomCode: "",
+    sessionJoined: false,
+  };
+  saveState(next);
+  return next;
 }
 
 export function saveState(state) {

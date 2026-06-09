@@ -31,6 +31,7 @@ import {
   applyRoomData,
   exportJson,
   importJson,
+  logoutSession,
 } from "../lib/store.js";
 import { getTopicIconKey } from "../lib/topicIcons.js";
 import {
@@ -146,7 +147,7 @@ export function PrepProvider({ children }) {
     });
   }, []);
 
-  const showSetup = !state.profile.name;
+  const showSetup = !state.sessionJoined;
 
   const onRoomLive = useCallback(
     (roomData) => {
@@ -176,9 +177,17 @@ export function PrepProvider({ children }) {
 
   const handleSetupSave = useCallback(
     (name, partner, roomCode) => {
+      const n = name.trim();
+      const p = partner.trim();
+      const room = roomCode.trim().toUpperCase();
+      if (!n || !p || !room) {
+        showToast("Enter your name, partner name, and room code", "error");
+        return false;
+      }
       mutateState((s) => {
-        s.profile = { name: name.trim() || "You", partner: partner.trim() || "Partner" };
-        s.roomCode = (roomCode.trim() || "PREPDUEL").toUpperCase();
+        s.profile = { name: n, partner: p };
+        s.roomCode = room;
+        s.sessionJoined = true;
       });
       initFirebase().then((fb) => {
         setFbReady(fb);
@@ -188,9 +197,20 @@ export function PrepProvider({ children }) {
           syncRoom(s);
         }
       });
+      showToast(`Joined room ${room} — welcome, ${n}!`);
+      return true;
     },
-    [mutateState, onRoomLive]
+    [mutateState, onRoomLive, showToast]
   );
+
+  const handleLogout = useCallback(() => {
+    const next = logoutSession(stateRef.current);
+    setStateRaw(next);
+    setLastRoomData(null);
+    setRemoteLeaderboard(null);
+    setActiveTab("home");
+    showToast("Logged out — join a room again when ready");
+  }, [showToast]);
 
   const startFocusLoop = useCallback(() => {
     if (focusTickRef.current) clearInterval(focusTickRef.current);
@@ -385,6 +405,7 @@ export function PrepProvider({ children }) {
         s.profile.name = name.trim() || "You";
         s.profile.partner = partner.trim() || "Partner";
         s.roomCode = code;
+        if (s.profile.name.trim() && s.roomCode) s.sessionJoined = true;
       });
       initFirebase().then((fb) => {
         setFbReady(fb);
@@ -932,6 +953,7 @@ export function PrepProvider({ children }) {
     openMoreSheet,
     closeMoreSheet,
     handleSetupSave,
+    handleLogout,
     setFocusBlockId,
     handleFocusStart,
     handleFocusBreak,

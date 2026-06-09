@@ -14,6 +14,7 @@ export default function SettingsTab({ active }) {
     handleImportData,
     handleAlarmTimeChange,
     handleAlarmEnabledChange,
+    handleLogout,
   } = usePrep();
 
   const [name, setName] = useState(state.profile.name || "");
@@ -84,6 +85,25 @@ export default function SettingsTab({ active }) {
         </button>
         <button id="sync-now" type="button" className="btn primary full" onClick={handleSyncNow}>
           Sync now
+        </button>
+        {state.sessionJoined && (
+          <p className="small muted session-hint" style={{ marginTop: 10 }}>
+            Signed in as <strong>{state.profile.name}</strong>
+            {state.roomCode ? ` · room ${state.roomCode}` : ""}
+          </p>
+        )}
+        <button
+          id="logout"
+          type="button"
+          className="btn ghost full"
+          style={{ marginTop: 8 }}
+          onClick={() => {
+            if (window.confirm("Log out? You'll need to enter name & room again. Study progress stays saved.")) {
+              handleLogout();
+            }
+          }}
+        >
+          Log out
         </button>
       </div>
 
