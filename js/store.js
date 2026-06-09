@@ -75,7 +75,12 @@ let onRoomUpdate = null;
 
 export async function initFirebase() {
   try {
-    const cfg = await import("./firebase-config.js");
+    let cfg;
+    try {
+      cfg = await import("./firebase-config.js");
+    } catch {
+      cfg = await import("./firebase-config.example.js");
+    }
     if (!cfg?.firebaseConfig?.apiKey || cfg.firebaseConfig.apiKey === "YOUR_API_KEY") return null;
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
     const {
