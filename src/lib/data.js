@@ -9,7 +9,11 @@ export const SCHEDULE_BLOCKS = [
   { id: "n-rev", time: "11:15–12:00", minutes: 45, session: "evening", title: "Revise + explain", desc: "Notes + project story aloud", track: "both", xp: 15 },
 ];
 
+/** Today tab — evening session only (after office) */
+export const TODAY_BLOCKS = SCHEDULE_BLOCKS.filter((b) => b.session === "evening");
+
 export const TOTAL_DAILY_MINUTES = SCHEDULE_BLOCKS.reduce((s, b) => s + b.minutes, 0);
+export const TODAY_MINUTES = TODAY_BLOCKS.reduce((s, b) => s + b.minutes, 0);
 
 /** Daily plan — each block links to topic IDs + concrete tasks */
 export const DAY_PLANS = {

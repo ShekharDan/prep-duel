@@ -3,217 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#141316" />
   <meta name="description" content="CIL + Corporate prep tracker with duels, quizzes, and alarms" />
   <title>PrepDuel — CIL × Corporate</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="css/app.css" />
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%236366f1' width='100' height='100' rx='20'/><text x='50' y='62' font-size='48' text-anchor='middle' fill='white'>⚔</text></svg>" />
+  <link rel="manifest" href="/prep-duel/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2334d399' width='100' height='100' rx='22'/><text x='50' y='62' font-size='48' text-anchor='middle' fill='%230a0a0a'>⚔</text></svg>" />
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem("prepduel_v2");
+        if (raw) {
+          var s = JSON.parse(raw);
+          if (s.colorMode) {
+            document.documentElement.dataset.color = s.colorMode;
+            document.body.dataset.color = s.colorMode;
+          }
+        }
+      } catch (e) {}
+      var h = new Date().getHours();
+      var p = h >= 5 && h < 11 ? "morning" : h >= 11 && h < 17 ? "afternoon" : h >= 17 && h < 21 ? "evening" : "night";
+      document.documentElement.dataset.phase = p;
+      document.body.dataset.phase = p;
+    })();
+  </script>
 </head>
 <body>
-  <div id="setup-overlay" class="overlay hidden">
-    <div class="modal">
-      <h2>Welcome to PrepDuel</h2>
-      <p>Your progress saves on this phone. Same <strong>room code</strong> + Firebase = live duel with your GF.</p>
-      <label>Your name <input id="setup-name" type="text" placeholder="Chandra" maxlength="24" /></label>
-      <label>Partner name <input id="setup-partner" type="text" placeholder="Her name" maxlength="24" /></label>
-      <label>Room code (both phones, same code) <input id="setup-room" type="text" placeholder="e.g. DAN2026" maxlength="16" /></label>
-      <button id="setup-save" class="btn primary">Start</button>
-    </div>
-  </div>
-
-  <header class="topbar">
-    <div class="brand">⚔ PrepDuel</div>
-    <div class="top-stats">
-      <span id="streak-badge" class="pill">🔥 0</span>
-      <span id="xp-badge" class="pill accent">XP 0</span>
-    </div>
-  </header>
-
-  <nav class="nav" id="main-nav">
-    <button data-tab="home" class="active">Home</button>
-    <button data-tab="today">Today</button>
-    <button data-tab="week">Week</button>
-    <button data-tab="topics">Topics</button>
-    <button data-tab="quiz">Tests</button>
-    <button data-tab="resources">Resources</button>
-    <button data-tab="duel">Duel</button>
-    <button data-tab="settings">⚙</button>
-  </nav>
-
-  <main id="app">
-    <!-- HOME -->
-    <section id="tab-home" class="tab active">
-      <div class="hero card">
-        <h1 id="greeting">Ready to duel?</h1>
-        <p class="muted">6 hr plan · CIL MT System + Corporate Java</p>
-        <div class="progress-row">
-          <div class="progress-label"><span>Today</span><span id="today-pct">0%</span></div>
-          <div class="bar"><div id="today-bar" class="bar-fill" style="width:0%"></div></div>
-        </div>
-        <div class="progress-row" style="margin-top:12px">
-          <div class="progress-label"><span>8-week roadmap</span><span id="goal-pct">0%</span></div>
-          <div class="bar"><div id="goal-bar" class="bar-fill accent" style="width:0%"></div></div>
-        </div>
-        <p id="goal-meta" class="small muted"></p>
-        <p id="persist-status" class="small muted" style="margin-top:6px"></p>
-      </div>
-      <div class="grid-2">
-        <div class="card duel-card">
-          <h3>🏆 Weekly Duel</h3>
-          <div id="duel-preview" class="duel-bars"></div>
-          <p id="duel-status" class="muted small"></p>
-        </div>
-        <div class="card">
-          <h3>🎖 Badges</h3>
-          <div id="badge-list" class="badges"></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>⏰ Next alarm</h3>
-        <p id="next-alarm" class="alarm-text">—</p>
-      </div>
-    </section>
-
-    <!-- TODAY -->
-    <section id="tab-today" class="tab">
-      <h2>Today's timetable</h2>
-      <p class="muted small" id="today-date"></p>
-      <p id="prep-day-banner" class="pill accent" style="display:inline-block;margin-bottom:10px"></p>
-      <div id="schedule-list"></div>
-      <div class="card energy-card">
-        <label>Energy today (1–5) <input type="range" id="energy" min="1" max="5" value="3" /></label>
-        <span id="energy-val">3</span>
-      </div>
-      <button id="save-day" class="btn primary full">Save day (+XP)</button>
-    </section>
-
-    <!-- WEEK -->
-    <section id="tab-week" class="tab">
-      <h2>Weekly rotation</h2>
-      <div id="week-plan"></div>
-      <h3>Mock tracker</h3>
-      <div id="mock-tracker" class="card"></div>
-    </section>
-
-    <!-- TOPICS -->
-    <section id="tab-topics" class="tab">
-      <h2>Study roadmap</h2>
-      <p class="muted small">Synced with Today & Week tabs — tick blocks and topics update automatically.</p>
-      <div id="topic-roadmap-summary" class="card"></div>
-      <div class="filter-row">
-        <button class="filter active" data-track="all">All</button>
-        <button class="filter" data-track="cil">CIL</button>
-        <button class="filter" data-track="corporate">Corporate</button>
-      </div>
-      <div id="topic-list"></div>
-    </section>
-
-    <!-- QUIZ -->
-    <section id="tab-quiz" class="tab">
-      <h2>Practice tests</h2>
-      <p class="muted">No negative marking on CIL — attempt all in real exam.</p>
-      <div id="quiz-categories"></div>
-      <div id="quiz-area" class="hidden">
-        <div class="quiz-header">
-          <button id="quiz-back" class="btn ghost">← Back</button>
-          <span id="quiz-progress"></span>
-        </div>
-        <div id="quiz-question" class="card"></div>
-        <div id="quiz-options"></div>
-        <button id="quiz-next" class="btn primary full hidden">Next</button>
-        <div id="quiz-result" class="hidden card result-card"></div>
-      </div>
-    </section>
-
-    <!-- RESOURCES -->
-    <section id="tab-resources" class="tab">
-      <h2>Resources</h2>
-      <div id="resource-list"></div>
-    </section>
-
-    <!-- DUEL -->
-    <section id="tab-duel" class="tab">
-      <h2>Leaderboard</h2>
-      <div class="card">
-        <div id="leaderboard"></div>
-        <p id="partner-roadmap" class="small muted" style="margin-top:8px"></p>
-        <p class="muted small">Both of you use the same room code — each phone updates only your own progress; duel updates live.</p>
-        <label class="small" style="margin-top:12px">Partner weekly XP (manual fallback if no Firebase)
-          <div class="mock-input">
-            <input type="number" id="partner-xp-input" min="0" placeholder="e.g. 320" />
-            <button type="button" id="partner-xp-save" class="btn">Update</button>
-          </div>
-        </label>
-      </div>
-      <h3>XP rules</h3>
-      <ul class="xp-rules">
-        <li>Complete schedule block → <strong>+15 XP</strong></li>
-        <li>Mark topic ✅ → <strong>+25 XP</strong></li>
-        <li>Quiz correct answer → <strong>+10 XP</strong></li>
-        <li>Save day (all blocks) → <strong>+50 XP</strong> bonus</li>
-        <li>Daily streak → <strong>+10 × days</strong></li>
-      </ul>
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="tab-settings" class="tab">
-      <h2>Settings</h2>
-      <div class="card">
-        <h3>Profile</h3>
-        <label>Your name <input id="set-name" type="text" /></label>
-        <label>Partner name <input id="set-partner" type="text" /></label>
-        <label>Room code <input id="set-room" type="text" placeholder="DAN2026" maxlength="16" /></label>
-        <button id="set-profile" class="btn">Update profile</button>
-        <button id="sync-now" class="btn primary" style="margin-top:8px">Sync now</button>
-      </div>
-      <div class="card">
-        <h3>🔔 Alarms (local notifications)</h3>
-        <p class="muted small">Works best if you install as app (Add to Home Screen) and allow notifications.</p>
-        <div id="alarm-list"></div>
-        <button id="enable-notify" class="btn primary">Enable notifications</button>
-      </div>
-      <div class="card">
-        <h3>💑 Share with GF (100% free)</h3>
-        <ol class="small">
-          <li><strong>Host:</strong> GitHub repo → Pages ON → link bhejo (free forever)</li>
-          <li><strong>Firebase:</strong> free Spark plan → Firestore → <code>firebase-config.js</code></li>
-          <li><strong>Dono phones:</strong> same room code (e.g. <code>DAN2026</code>), alag naam</li>
-          <li><strong>Add to Home Screen</strong> on phone — app jaisa chalega</li>
-          <li>Firebase na ho to <strong>Export JSON</strong> se manual backup</li>
-        </ol>
-        <p class="small muted">Tum apna progress update karo, wo apna — Duel tab pe dono ka XP + roadmap % dikhega (Firebase pe).</p>
-      </div>
-      <div class="card">
-        <h3>☁ Firebase sync (for GF duel)</h3>
-        <ol class="small muted">
-          <li>Create free project at <a href="https://console.firebase.google.com" target="_blank" rel="noopener">Firebase Console</a></li>
-          <li>Enable Firestore (test mode)</li>
-          <li>Copy web config into <code>js/firebase-config.js</code> (see example file)</li>
-          <li>Redeploy to GitHub Pages</li>
-        </ol>
-        <p id="firebase-status" class="pill">Solo mode</p>
-      </div>
-      <div class="card">
-        <h3>📱 GitHub Pages deploy</h3>
-        <ol class="small muted">
-          <li>Create GitHub repo <code>prep-duel</code></li>
-          <li>Upload <code>prep-duel</code> folder contents</li>
-          <li>Settings → Pages → Deploy from branch <code>main</code> / root</li>
-          <li>Open <code>https://YOUR_USERNAME.github.io/prep-duel/</code> on phone</li>
-          <li>Add to Home Screen for app-like alarms</li>
-        </ol>
-      </div>
-      <div class="card">
-        <h3>Backup</h3>
-        <button id="export-data" class="btn">Export JSON</button>
-        <label class="file-label btn ghost">Import JSON<input type="file" id="import-data" accept=".json" hidden /></label>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer muted small">PrepDuel · GitHub Pages · Data stays on device unless Firebase on</footer>
-
-  <script type="module" src="js/app.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
