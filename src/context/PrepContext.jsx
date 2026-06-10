@@ -723,7 +723,7 @@ export function PrepProvider({ children }) {
     const plan = getDayPlan(dayName);
     const prepBanner =
       cycleDay != null
-        ? `Prep Day ${cycleDay} — ${dayName} (evening session · started ${state.prepStartDate})`
+        ? `Prep Day ${cycleDay} — ${dayName} (started ${state.prepStartDate})`
         : "";
     const blocks = TODAY_BLOCKS.map((b) => {
       const blockPlan = plan.blocks[b.id];
@@ -734,6 +734,7 @@ export function PrepProvider({ children }) {
         .join(", ");
       return {
         id: b.id,
+        session: b.session,
         time: b.time,
         minutes: b.minutes,
         title: b.title,

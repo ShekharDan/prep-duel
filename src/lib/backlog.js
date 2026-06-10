@@ -66,7 +66,7 @@ function buildBlockItem(state, dateKey, blockDef, blockPlan) {
   };
 }
 
-/** Unchecked evening blocks since prep start (includes today if incomplete) */
+/** Unchecked day blocks since prep start (includes today if incomplete) */
 export function getBacklogItems(state) {
   const start = state?.prepStartDate;
   if (!start) return [];

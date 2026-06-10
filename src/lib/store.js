@@ -1,7 +1,7 @@
 import { countRoadmapProgress } from "./roadmap.js";
 import { buildPresence } from "./presence.js";
 import { defaultFocusState } from "./focus.js";
-import { SCHEDULE_START_DATE } from "./data.js";
+import { SCHEDULE_START_DATE, SCHEDULE_VERSION } from "./data.js";
 
 const KEY_V2 = "prepduel_v2";
 const KEY_V1 = "prepduel_v1";
@@ -33,6 +33,7 @@ function defaultState() {
     partnerXpLocal: 0,
     lastSyncAt: null,
     prepStartDate: SCHEDULE_START_DATE,
+    scheduleVersion: SCHEDULE_VERSION,
     backlogSkipped: {},
     focus: defaultFocusState(),
     colorMode: "dark",
@@ -47,10 +48,11 @@ function mergeSavedState(parsed) {
     ...parsed,
     profile: { ...base.profile, ...(parsed.profile || {}) },
   };
-  const legacyStarts = ["2026-05-28", "2026-05-29"];
-  if (!merged.prepStartDate || legacyStarts.includes(merged.prepStartDate)) {
+  if (merged.scheduleVersion !== SCHEDULE_VERSION) {
     merged.prepStartDate = SCHEDULE_START_DATE;
+    merged.scheduleVersion = SCHEDULE_VERSION;
   }
+  if (!merged.prepStartDate) merged.prepStartDate = SCHEDULE_START_DATE;
   if (!merged.backlogSkipped) merged.backlogSkipped = {};
   if (merged.profile?.name?.trim()) merged.sessionJoined = true;
   return merged;

@@ -2,6 +2,8 @@
 
 /** Official prep cycle start — Day 1 = Wednesday */
 export const SCHEDULE_START_DATE = "2026-06-10";
+/** Bump when cycle/start changes — migrates saved prepStartDate */
+export const SCHEDULE_VERSION = 3;
 
 export const SCHEDULE_BLOCKS = [
   { id: "m-p2", time: "6:30–8:00", minutes: 90, session: "morning", title: "CIL Paper II", desc: "DBMS / OS / CN / DSA / SE — see weekly rotation", track: "cil", xp: 15 },
@@ -12,8 +14,8 @@ export const SCHEDULE_BLOCKS = [
   { id: "n-rev", time: "11:15–12:00", minutes: 45, session: "evening", title: "Revise + explain", desc: "Notes + project story aloud", track: "both", xp: 15 },
 ];
 
-/** Today tab — evening session only (after office) */
-export const TODAY_BLOCKS = SCHEDULE_BLOCKS.filter((b) => b.session === "evening");
+/** Today tab — full day (morning + evening) */
+export const TODAY_BLOCKS = SCHEDULE_BLOCKS;
 
 export const TOTAL_DAILY_MINUTES = SCHEDULE_BLOCKS.reduce((s, b) => s + b.minutes, 0);
 export const TODAY_MINUTES = TODAY_BLOCKS.reduce((s, b) => s + b.minutes, 0);

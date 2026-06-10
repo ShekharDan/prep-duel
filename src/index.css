@@ -1970,6 +1970,30 @@ html[data-color="light"] .hero-motivate {
   -webkit-text-fill-color: transparent;
 }
 
+/* Today session groups */
+.today-session-group {
+  margin-bottom: 18px;
+}
+
+.today-session-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+.today-session-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+}
+
 /* Backlog */
 .backlog-list {
   display: grid;
