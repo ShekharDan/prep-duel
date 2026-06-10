@@ -47,7 +47,8 @@ function mergeSavedState(parsed) {
     ...parsed,
     profile: { ...base.profile, ...(parsed.profile || {}) },
   };
-  if (!merged.prepStartDate || merged.prepStartDate === "2026-05-28") {
+  const legacyStarts = ["2026-05-28", "2026-05-29"];
+  if (!merged.prepStartDate || legacyStarts.includes(merged.prepStartDate)) {
     merged.prepStartDate = SCHEDULE_START_DATE;
   }
   if (!merged.backlogSkipped) merged.backlogSkipped = {};

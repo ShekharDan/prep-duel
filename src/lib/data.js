@@ -1,7 +1,7 @@
 /** PrepDuel content: schedules, topics, quizzes, resources */
 
-/** Official prep cycle start (explore day excluded) */
-export const SCHEDULE_START_DATE = "2026-05-29";
+/** Official prep cycle start — Day 1 = Wednesday */
+export const SCHEDULE_START_DATE = "2026-06-10";
 
 export const SCHEDULE_BLOCKS = [
   { id: "m-p2", time: "6:30–8:00", minutes: 90, session: "morning", title: "CIL Paper II", desc: "DBMS / OS / CN / DSA / SE — see weekly rotation", track: "cil", xp: 15 },
@@ -260,28 +260,24 @@ export const DAY_PLANS = {
   },
 };
 
-/** Prep cycle starts Tuesday — Monday is last (catch-up) */
+/** Prep cycle starts Wednesday — Mon/Tue at end are catch-up */
 export const PREP_CYCLE_DAYS = [
-  "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
   "Saturday",
   "Sunday",
   "Monday",
+  "Tuesday",
 ];
 
-/** 8-week roadmap — Week 1 begins Tuesday (Monday topics moved to catch-up) */
+/** 8-week roadmap — Week 1 begins Wednesday */
 export const ROADMAP_ORDER = [
-  { week: 1, day: "Tuesday", topicId: "cil-os" },
-  { week: 1, day: "Tuesday", topicId: "corp-java-oop" },
-  { week: 1, day: "Tuesday", topicId: "corp-arr-hash" },
-  { week: 1, day: "Tuesday", topicId: "cil-quant-pct" },
-  { week: 2, day: "Wednesday", topicId: "cil-cn" },
-  { week: 2, day: "Wednesday", topicId: "corp-amdocs" },
-  { week: 2, day: "Wednesday", topicId: "corp-tree" },
-  { week: 2, day: "Wednesday", topicId: "cil-reason-puzzle" },
-  { week: 2, day: "Wednesday", topicId: "cil-gk" },
+  { week: 1, day: "Wednesday", topicId: "cil-cn" },
+  { week: 1, day: "Wednesday", topicId: "corp-amdocs" },
+  { week: 1, day: "Wednesday", topicId: "corp-tree" },
+  { week: 1, day: "Wednesday", topicId: "cil-reason-puzzle" },
+  { week: 1, day: "Wednesday", topicId: "cil-gk" },
   { week: 2, day: "Thursday", topicId: "cil-dsa-mcq" },
   { week: 3, day: "Friday", topicId: "cil-c" },
   { week: 3, day: "Friday", topicId: "corp-spring" },
@@ -294,11 +290,15 @@ export const ROADMAP_ORDER = [
   { week: 5, day: "Monday (catch-up)", topicId: "corp-arr-2p" },
   { week: 5, day: "Monday (catch-up)", topicId: "cil-reason-syl" },
   { week: 5, day: "Monday (catch-up)", topicId: "cil-eng-rc" },
+  { week: 6, day: "Tuesday (catch-up)", topicId: "cil-os" },
+  { week: 6, day: "Tuesday (catch-up)", topicId: "corp-java-oop" },
+  { week: 6, day: "Tuesday (catch-up)", topicId: "corp-arr-hash" },
+  { week: 6, day: "Tuesday (catch-up)", topicId: "cil-quant-pct" },
 ];
 
 export const WEEK_ROTATION = PREP_CYCLE_DAYS.map((day, i) => {
   const plan = DAY_PLANS[day];
-  const label = i === 0 ? `${day} (Day 1 — start)` : i === 6 ? `${day} (catch-up)` : day;
+  const label = i === 0 ? `${day} (Day 1 — start)` : i >= 5 ? `${day} (catch-up)` : day;
   return {
     day,
     label,

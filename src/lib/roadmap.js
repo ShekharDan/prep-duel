@@ -20,7 +20,7 @@ export function isPrepStarted(state, date = new Date()) {
   return cur >= start;
 }
 
-/** Which plan day to use — cycle starts on prepStartDate (Day 1 = Tuesday plan) */
+/** Which plan day to use — cycle starts on prepStartDate (Day 1 = Wednesday plan) */
 export function getEffectiveDay(state, date = new Date()) {
   const startKey = state?.prepStartDate;
   if (!startKey) return getDayName(date);
@@ -59,7 +59,7 @@ export function getPrepCycleDayNumberForDate(prepStartDate, dateKey) {
 }
 
 export function getDayPlan(dayName) {
-  return DAY_PLANS[dayName] || DAY_PLANS.Tuesday;
+  return DAY_PLANS[dayName] || DAY_PLANS.Wednesday;
 }
 
 export function getTopicById(id) {
